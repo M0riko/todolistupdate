@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         div.querySelector('.task-text').classList.remove('none');
                         div.querySelector('.change-task').classList.add('none');
                     }
+                    saveTasksToLocalStorage();
                 });
             } else if(div.querySelector('.task-text').classList.contains('none')) {
                 div.querySelector('.task-text').classList.remove('none');
