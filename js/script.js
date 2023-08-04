@@ -5,9 +5,21 @@ document.addEventListener('DOMContentLoaded', function() {
           headerText = document.querySelector('.header-text'),
           list = document.querySelector('.task-list'),
           listTask = document.querySelector('.task');
-
-
     let countTask = 0;
+
+
+
+
+    const savedTasks = JSON.parse(localStorage.getItem('arr'));
+
+    if (savedTasks && savedTasks.length > 0) {
+        savedTasks.forEach(task => {
+            create(task);
+        });
+    }
+
+
+
 
     btnChangeHeader.addEventListener('click', () => {
         let promptChange = prompt('Введи Наздвание', '');
@@ -26,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function create(task) {
+        
         countTask ++;
         const div = document.createElement('div');
         div.classList.add('task');
@@ -47,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 div.querySelector('.task-text').classList.remove('line')
             }
+            saveTasksToLocalStorage();
         });
         div.querySelector('.task-text').addEventListener('click', () => {
             if(!div.querySelector('.task-text').classList.contains('line')) {
@@ -58,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         div.querySelector('.del').addEventListener('click', () => {
             countTask--;
             div.remove();
+            saveTasksToLocalStorage()
         })
         div.querySelector('.change').addEventListener('click', () => {
             if(div.querySelector('.change-task').classList.contains('none')) {
@@ -78,6 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         list.appendChild(div);   
         input.value = ''; 
+        saveTasksToLocalStorage();
+        function saveTasksToLocalStorage() {
+            const tasks = Array.from(document.querySelectorAll('.task-text')).map(taskElement => taskElement.textContent);
+            localStorage.setItem('arr', JSON.stringify(tasks));
+        }
     }
-
 });
