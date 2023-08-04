@@ -155,3 +155,24 @@ input::placeholder {
     text-decoration: line-through;
     color: rgba(0, 0, 0, 0.7);
 }
+
+
+
+@media (max-width: 500px) {
+    .task {
+        padding: 10px;
+    }
+    #change-text{
+        width: 80px;
+    }
+    .doneChange {
+        font-size: 11px;
+    }
+    img {
+        width: 15px;
+        height: 15px;
+    }
+    #input-text {
+        width: 190px;
+    }
+}
