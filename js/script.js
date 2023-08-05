@@ -3,12 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
           input = document.querySelector('#input-text'),
           btnAddList = document.querySelector('.btn'),
           headerText = document.querySelector('.header-text'),
-          list = document.querySelector('.task-list'),
-          listTask = document.querySelector('.task');
+          list = document.querySelector('.task-list');
+
     let countTask = 0;
-
-
-
 
     const savedTasks = JSON.parse(localStorage.getItem('arr'));
 
@@ -17,8 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
             create(task);
         });
     }
-
-
 
 
     btnChangeHeader.addEventListener('click', () => {
@@ -33,6 +28,17 @@ document.addEventListener('DOMContentLoaded', function() {
             if(countTask < 4){
                 create(inputTask);
             }
+        } else {
+            const errorDiv = document.createElement('div')
+            errorDiv.innerHTML = `Вы ничего не ввели!`;
+            errorDiv.style.position = 'absolute';
+            errorDiv.style.color = 'red';
+            errorDiv.style.top = '62px';
+            errorDiv.style.fontSize = '25px';
+            document.querySelector('.form').appendChild(errorDiv)
+            setTimeout(() => {
+                errorDiv.remove()
+            }, 1000)
         }
     }); 
 
@@ -45,22 +51,21 @@ document.addEventListener('DOMContentLoaded', function() {
         div.innerHTML= `
             <form action="#" class="change-task none">
             <input type="text" id="change-text">
-            <button class="doneChange">CHANGE</button>
+            <button class="doneChange">EDIT</button>
             </form>
                 <div class="task-text">${task}</div>
                 <div class="task-buttons">
                 <button class="change"><img src="img/change.png" alt="change"></button>
                 <button class="done"><img src="img/done.png" alt="change"></button>
                 <button class="del"><img src="img/dalete.png" alt="change"></button>
-            </div> 
+            </div>
         `;
         div.querySelector('.done').addEventListener('click', () => {
             if(!div.querySelector('.task-text').classList.contains('line')) {
-                div.querySelector('.task-text').classList.add('line')
+                div.querySelector('.task-text').classList.add('line');
             } else {
-                div.querySelector('.task-text').classList.remove('line')
-            }
-            saveTasksToLocalStorage();
+                div.querySelector('.task-text').classList.remove('line');
+            } 
         });
         div.querySelector('.task-text').addEventListener('click', () => {
             if(!div.querySelector('.task-text').classList.contains('line')) {
@@ -71,8 +76,11 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         div.querySelector('.del').addEventListener('click', () => {
             countTask--;
-            div.remove();
-            saveTasksToLocalStorage()
+            div.innerHTML = `Вы удалили задание: ${div.querySelector('.task-text').textContent}`;
+            setTimeout(() => {
+                div.remove();
+            }, 1000);
+            saveTasksToLocalStorage();
         })
         div.querySelector('.change').addEventListener('click', () => {
             if(div.querySelector('.change-task').classList.contains('none')) {

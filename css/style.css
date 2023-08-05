@@ -80,6 +80,7 @@ img {
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     height: 60px;
+    position: relative;
 }
 
 #input-text {
@@ -135,7 +136,7 @@ input::placeholder {
     border-radius: 7px;
     font-weight: 600;
     padding: 7px;
-    background: rgba(255, 0, 0, 0.7);
+    background: rgb(64, 175, 255);
 }
 #change-text {
     height: 30px;
