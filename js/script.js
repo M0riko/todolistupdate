@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-
     btnChangeHeader.addEventListener('click', () => {
         let promptChange = prompt('Введи Наздвание', '');
-        headerText.innerHTML = promptChange;
+        if(!promptChange.length == 0 && promptChange.length < 13) {
+            headerText.innerHTML = promptChange;
+        }
     });
-
 
     btnAddList.addEventListener('click', () => {
         const inputTask = input.value.trim();
