@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', function() {
           input = document.querySelector('#input-text'),
           btnAddList = document.querySelector('.btn'),
           headerText = document.querySelector('.header-text'),
-          list = document.querySelector('.task-list');
-
-    let countTask = 0;
-
+          list = document.querySelector('.task-list'),
+          next = document.querySelector('.next'),
+          prev = document.querySelector('.prev'),
+          countPage = document.querySelector('.countPaginat');
+    const maxElement = 4;
+    let currentPage = 1;
+    countPage.innerHTML = currentPage;
     const savedTasks = JSON.parse(localStorage.getItem('arr'));
-
     if (savedTasks && savedTasks.length > 0) {
         savedTasks.forEach(task => {
             create(task);
@@ -25,9 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     btnAddList.addEventListener('click', () => {
         const inputTask = input.value.trim();
         if(inputTask !== '') {
-            if(countTask < 4){
                 create(inputTask);
-            }
+                showItem(currentPage);
         } else {
             const errorDiv = document.createElement('div')
             errorDiv.innerHTML = `Вы ничего не ввели!`;
@@ -44,8 +45,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function create(task) {
-        
-        countTask ++;
         const div = document.createElement('div');
         div.classList.add('task');
         div.innerHTML= `
@@ -75,10 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         div.querySelector('.del').addEventListener('click', () => {
-            countTask--;
             div.innerHTML = `Вы удалили задание: ${div.querySelector('.task-text').textContent}`;
             setTimeout(() => {
                 div.remove();
+                showItem(currentPage);
             }, 1000);
             saveTasksToLocalStorage();
         })
@@ -107,5 +106,35 @@ document.addEventListener('DOMContentLoaded', function() {
             const tasks = Array.from(document.querySelectorAll('.task-text')).map(taskElement => taskElement.textContent);
             localStorage.setItem('arr', JSON.stringify(tasks));
         }
-    }
+    } 
+    function showItem(page) {
+        const elemetnPage = list.querySelectorAll('.task');
+        const startIndex = (page - 1) * maxElement;
+        const endIndex = startIndex + maxElement ;
+        elemetnPage.forEach((item, index) => {
+            if(index >= startIndex && index < endIndex) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        })
+    };
+    showItem(currentPage);
+    next.addEventListener('click', () => {
+        const elemetnPage = list.querySelectorAll('.task');
+        const totalPage = Math.ceil(elemetnPage.length / maxElement);
+        if(currentPage < totalPage) {
+            currentPage++;
+            countPage.innerHTML = currentPage;
+            showItem(currentPage);
+        }
+    })
+    prev.addEventListener('click', () => {
+        const elemetnPage = list.querySelectorAll('.task');
+        if(currentPage > 1) {
+            currentPage--;
+            countPage.innerHTML = currentPage;
+            showItem(currentPage);
+        }
+    })
 });
