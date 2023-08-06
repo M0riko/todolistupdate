@@ -137,4 +137,5 @@ document.addEventListener('DOMContentLoaded', function() {
             showItem(currentPage);
         }
     })
+    console.log(1);
 });
