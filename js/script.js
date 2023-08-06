@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     })
     prev.addEventListener('click', () => {
-        const elemetnPage = list.querySelectorAll('.task');
+        
         if(currentPage > 1) {
             currentPage--;
             countPage.innerHTML = currentPage;

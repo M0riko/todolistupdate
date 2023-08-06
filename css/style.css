@@ -161,7 +161,8 @@ input::placeholder {
     top: 600px;
     position: absolute;
     width: 300px;
-    top: 650px;
+    top: 635px;
+    height: 75px;
     left: 50%;
     transform: translate(-50%, -50%);
 }
@@ -172,7 +173,6 @@ input::placeholder {
     align-items: center;
     max-width: 350px;
     margin: 0 auto;
-    margin-top: 50px;
 }
 
 .prev, .next {
