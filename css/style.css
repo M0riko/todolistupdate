@@ -198,7 +198,7 @@ input::placeholder {
 }
 
 
-@media (max-width: 501px) {
+@media (max-width: 500px) {
     .task {
         padding: 10px;
     }
