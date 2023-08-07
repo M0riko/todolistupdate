@@ -67,8 +67,10 @@ img {
 }
 
 .content {
+    
     margin: 0 auto;
     max-width: 700px;
+    height: 100%;
 }
 
 .form {
@@ -157,24 +159,18 @@ input::placeholder {
     color: rgba(0, 0, 0, 0.6);
 }
 
-.conteinet-paginat {
-    top: 600px;
-    position: absolute;
-    width: 300px;
-    top: 635px;
-    height: 75px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+
 
 .paginat {
+    position: absolute;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between; 
     align-items: center;
-    max-width: 350px;
-    margin: 0 auto;
+    width: 300px;
+    bottom: 10px;
+    left: 50%; 
+    transform: translateX(-50%); 
 }
-
 .prev, .next {
     background: rgba(0, 0, 0, 0.1);
     border-radius: 100%;
@@ -200,7 +196,7 @@ input::placeholder {
 
 @media (max-width: 500px) {
     .task {
-        padding: 10px;
+        padding: 10px 20px 10px 20px;
     }
     #change-text{
         width: 80px;
