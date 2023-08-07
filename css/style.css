@@ -172,6 +172,7 @@ input::placeholder {
     transform: translateX(-50%); 
 }
 .prev, .next {
+    
     background: rgba(0, 0, 0, 0.1);
     border-radius: 100%;
     display: flex;
