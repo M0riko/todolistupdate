@@ -167,7 +167,7 @@ input::placeholder {
     justify-content: space-between; 
     align-items: center;
     width: 300px;
-    bottom: 10px;
+    bottom: 5px;
     left: 50%; 
     transform: translateX(-50%); 
 }
