@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (savedTasks && savedTasks.length > 0) {
         savedTasks.forEach(task => {
             create(task);
-            showOrNotPaginat(elements)
-            elements.push([...savedTasks])
+            showOrNotPaginat(elements);
+            elements.push([...savedTasks]);
         });
     }
 
