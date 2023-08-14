@@ -36,7 +36,7 @@ function showOrNotPaginat(arr) {
 showOrNotPaginat(elements)
 
     btnChangeHeader.addEventListener('click', () => {
-        let promptChange = prompt('Введи Наздвание', '');
+        let promptChange = prompt('Введи Заголовок', '');
         if(!promptChange.length == 0 && promptChange.length < 13) {
             headerText.innerHTML = promptChange;
         }
@@ -109,7 +109,7 @@ showOrNotPaginat(elements)
             if(div.querySelector('.change-task').classList.contains('none')) {
                 div.querySelector('.task-text').classList.add('none');
                 div.querySelector('.change-task').classList.remove('none');
-                div.querySelector('#change-text').value = task;
+                div.querySelector('#change-text').value = div.querySelector('.task-text').textContent;
                 div.querySelector('.doneChange').addEventListener('click', () => {
                     if(div.querySelector('#change-text').value.trim() !== '') {
                         div.querySelector('.task-text').innerHTML = div.querySelector('#change-text').value;
