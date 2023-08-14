@@ -12,13 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPage = 1;
     countPage.innerHTML = currentPage;
     const savedTasks = JSON.parse(localStorage.getItem('arr'));
-    let elements = [...savedTasks];
+    let elements = [];
     if (savedTasks && savedTasks.length > 0) {
         savedTasks.forEach(task => {
             create(task);
             showOrNotPaginat(elements)
+            elements.push([...savedTasks])
         });
     }
+
 function showOrNotPaginat(arr) {
     if(arr.length >= 5) {
         paginat.classList.add('active');
