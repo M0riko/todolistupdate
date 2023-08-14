@@ -171,6 +171,16 @@ input::placeholder {
     left: 50%; 
     transform: translateX(-50%); 
 }
+.active {
+    opacity: 100%;
+    transition: all .5s ease;
+}
+.none {
+    transition: all .5s ease;
+    opacity: 0;
+    width: 1px;
+    transform: scale(0);
+}
 .prev, .next {
     
     background: rgba(0, 0, 0, 0.1);

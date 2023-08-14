@@ -6,16 +6,32 @@ document.addEventListener('DOMContentLoaded', function() {
           list = document.querySelector('.task-list'),
           next = document.querySelector('.next'),
           prev = document.querySelector('.prev'),
-          countPage = document.querySelector('.countPaginat');
+          countPage = document.querySelector('.countPaginat'),
+          paginat = document.querySelector('.paginat');
     const maxElement = 4;
     let currentPage = 1;
     countPage.innerHTML = currentPage;
     const savedTasks = JSON.parse(localStorage.getItem('arr'));
+    let elements = [...savedTasks];
     if (savedTasks && savedTasks.length > 0) {
         savedTasks.forEach(task => {
             create(task);
+            showOrNotPaginat(elements)
         });
     }
+function showOrNotPaginat(arr) {
+    if(arr.length >= 5) {
+        paginat.classList.add('active');
+        paginat.classList.remove('none');
+    } else if(arr.length < 5) {
+        paginat.classList.remove('active');
+        paginat.classList.add('none');
+        currentPage = 1;
+        countPage.innerHTML = currentPage;
+    }
+}
+
+showOrNotPaginat(elements)
 
     btnChangeHeader.addEventListener('click', () => {
         let promptChange = prompt('Введи Наздвание', '');
@@ -29,6 +45,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if(inputTask !== '') {
                 create(inputTask);
                 showItem(currentPage);
+                elements.push(1);
+                console.log(elements)
+                showOrNotPaginat(elements);
         } else {
             const errorDiv = document.createElement('div')
             errorDiv.innerHTML = `Вы ничего не ввели!`;
@@ -77,6 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
             div.innerHTML = `Вы удалили задание: ${div.querySelector('.task-text').textContent}`;
             setTimeout(() => {
                 div.remove();
+                elements.pop()
+                console.log(elements)
+                showOrNotPaginat(elements)
                 showItem(currentPage);
             }, 1000);
             saveTasksToLocalStorage();
