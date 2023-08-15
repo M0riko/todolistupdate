@@ -11,13 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxElement = 4;
     let currentPage = 1;
     countPage.innerHTML = currentPage;
-    const savedTasks = JSON.parse(localStorage.getItem('arr'));
-    let elements = [];
-    if (savedTasks && savedTasks.length > 0) {
-        savedTasks.forEach(task => {
+    const savedTasks = () => JSON.parse(localStorage.getItem('arr'));
+    console.log(savedTasks().length)
+    if (savedTasks().length > 0) {
+        savedTasks().forEach(task => {
             create(task);
-            showOrNotPaginat(elements);
-            elements.push([...savedTasks]);
+            showOrNotPaginat(savedTasks());
         });
     }
 
@@ -33,23 +32,41 @@ function showOrNotPaginat(arr) {
     }
 }
 
-showOrNotPaginat(elements)
+showOrNotPaginat(savedTasks())
 
     btnChangeHeader.addEventListener('click', () => {
         let promptChange = prompt('Введи Заголовок', '');
-        if(!promptChange.length == 0 && promptChange.length < 13) {
+        if(promptChange.length !== 0 && promptChange.length < 13) {
             headerText.innerHTML = promptChange;
         }
     });
 
-    btnAddList.addEventListener('click', () => {
+    btnAddList.addEventListener('click', (e) => {
+        e.preventDefault();
         const inputTask = input.value.trim();
-        if(inputTask !== '') {
+        const lowerCaseSaveArr = savedTasks().reduce((arr, e) => {
+            arr.push(e.toLowerCase());
+            return arr;
+        }, [])
+        if(lowerCaseSaveArr.indexOf(inputTask.toLowerCase()) >= 0) {
+            const errorDiv = document.createElement('div')
+            errorDiv.innerHTML = `Такая задача уже есть!`;
+            errorDiv.style.position = 'absolute';
+            errorDiv.style.color = 'red';
+            errorDiv.style.top = '62px';
+            errorDiv.style.fontSize = '25px';
+            document.querySelector('.form').appendChild(errorDiv)
+            setTimeout(() => {
+                errorDiv.remove()
+            }, 1000)
+        } else if(inputTask !== '') {
+                savedTasks();
                 create(inputTask);
                 showItem(currentPage);
-                elements.push(1);
-                console.log(elements)
-                showOrNotPaginat(elements);
+                savedTasks().push(`${inputTask}`);
+                console.log(savedTasks())
+                showOrNotPaginat(savedTasks());
+
         } else {
             const errorDiv = document.createElement('div')
             errorDiv.innerHTML = `Вы ничего не ввели!`;
@@ -80,57 +97,72 @@ showOrNotPaginat(elements)
                 <button class="del"><img src="img/dalete.png" alt="change"></button>
             </div>
         `;
-        div.querySelector('.done').addEventListener('click', () => {
-            if(!div.querySelector('.task-text').classList.contains('line')) {
-                div.querySelector('.task-text').classList.add('line');
+        const doneButton = div.querySelector('.done');
+        const taskText = div.querySelector('.task-text');
+        const delButton = div.querySelector('.del');
+        const changeButton = div.querySelector('.change');
+        const changeTaskInput = div.querySelector('#change-text');
+        const doneChangeButton = div.querySelector('.doneChange');
+        
+        doneButton.addEventListener('click', () => {
+            if (!taskText.classList.contains('line')) {
+                taskText.classList.add('line');
             } else {
-                div.querySelector('.task-text').classList.remove('line');
-            } 
-        });
-        div.querySelector('.task-text').addEventListener('click', () => {
-            if(!div.querySelector('.task-text').classList.contains('line')) {
-                div.querySelector('.task-text').classList.add('line')
-            } else {
-                div.querySelector('.task-text').classList.remove('line')
+                taskText.classList.remove('line');
             }
-        })
-        div.querySelector('.del').addEventListener('click', () => {
-            div.innerHTML = `Вы удалили задание: ${div.querySelector('.task-text').textContent}`;
+        });
+        
+        taskText.addEventListener('click', () => {
+            if (!taskText.classList.contains('line')) {
+                taskText.classList.add('line');
+            } else {
+                taskText.classList.remove('line');
+            }
+        });
+        
+        delButton.addEventListener('click', (e) => {
+            div.innerHTML = `Вы удалили задание: ${taskText.textContent}`;
+            console.log(savedTasks().indexOf(taskText.textContent))
             setTimeout(() => {
                 div.remove();
-                elements.pop()
-                console.log(elements)
-                showOrNotPaginat(elements)
+                console.log(savedTasks())
+                showOrNotPaginat(savedTasks());
                 showItem(currentPage);
             }, 1000);
             saveTasksToLocalStorage();
-        })
-        div.querySelector('.change').addEventListener('click', () => {
-            if(div.querySelector('.change-task').classList.contains('none')) {
-                div.querySelector('.task-text').classList.add('none');
-                div.querySelector('.change-task').classList.remove('none');
-                div.querySelector('#change-text').value = div.querySelector('.task-text').textContent;
-                div.querySelector('.doneChange').addEventListener('click', () => {
-                    if(div.querySelector('#change-text').value.trim() !== '') {
-                        div.querySelector('.task-text').innerHTML = div.querySelector('#change-text').value;
-                        div.querySelector('.task-text').classList.remove('none');
-                        div.querySelector('.change-task').classList.add('none');
-                    }
-                    saveTasksToLocalStorage();
-                });
-            } else if(div.querySelector('.task-text').classList.contains('none')) {
-                div.querySelector('.task-text').classList.remove('none');
-                div.querySelector('.change-task').classList.add('none');
+        });
+        
+        changeButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (taskText.classList.contains('none')) {
+                taskText.classList.remove('none');
+                changeTaskInput.classList.add('none');
+            } else {
+                taskText.classList.add('none');
+                changeTaskInput.classList.remove('none');
+                changeTaskInput.value = taskText.textContent;
             }
         });
+        
+        doneChangeButton.addEventListener('click', () => {
+            if (changeTaskInput.value.trim() !== '') {
+                taskText.innerHTML = changeTaskInput.value;
+                taskText.classList.remove('none');
+                changeTaskInput.classList.add('none');
+            }
+            saveTasksToLocalStorage();
+        });
+
+        
         list.appendChild(div);   
         input.value = ''; 
         saveTasksToLocalStorage();
-        function saveTasksToLocalStorage() {
+    } 
+    function saveTasksToLocalStorage() {
             const tasks = Array.from(document.querySelectorAll('.task-text')).map(taskElement => taskElement.textContent);
             localStorage.setItem('arr', JSON.stringify(tasks));
-        }
-    } 
+    }
+
     function showItem(page) {
         const elemetnPage = list.querySelectorAll('.task');
         const startIndex = (page - 1) * maxElement;
@@ -161,5 +193,4 @@ showOrNotPaginat(elements)
             showItem(currentPage);
         }
     })
-    console.log(1);
 });

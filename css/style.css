@@ -21,7 +21,7 @@ button {
     border: none;
     transition: all .1s;
     cursor: pointer;
-    margin-right: 15px;
+    margin-left: 15px;
 }
 
 button:hover {
@@ -30,6 +30,7 @@ button:hover {
 
 
 .container{
+    padding: 5px;
     max-width: 1200px;
     margin: 0 auto;
     padding-top: 30px;
@@ -67,7 +68,7 @@ img {
 }
 
 .content {
-    
+    padding: 5px;
     margin: 0 auto;
     max-width: 700px;
     height: 100%;
@@ -102,6 +103,7 @@ img {
     font-weight: 600;
     padding: 7px;
     margin-left: 20px;
+    margin-right: 0;
 }
 
 input::placeholder {
@@ -167,16 +169,16 @@ input::placeholder {
     justify-content: space-between; 
     align-items: center;
     width: 200px;
-    bottom: 5px;
+    bottom: 300px;
     left: 50%; 
     transform: translateX(-50%); 
 }
 .active {
     opacity: 100%;
-    transition: all .5s ease;
+    transition: all .3s ease;
 }
 .none {
-    transition: all .5s ease;
+    transition: all .3s ease;
     opacity: 0;
     width: 1px;
     transform: scale(0);
@@ -229,5 +231,20 @@ input::placeholder {
     }
     #input-text {
         width: 190px;
+    }
+    .paginat {
+        bottom: 5px;
+    }
+}
+
+@media (max-height: 920px) {
+    .paginat {
+        bottom: 5px;
+    }
+}
+
+@media (min-height: 950px) {
+    .paginat {
+        bottom: 5px;
     }
 }
