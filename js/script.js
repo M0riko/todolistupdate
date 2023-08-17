@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const todo = JSON.parse(localStorage.getItem('todos')) || [];
+    const todo = () => JSON.parse(localStorage.getItem('todos')) || [];
     const btnChangeHeader = document.querySelector('#change-header'),
         input = document.querySelector('#input-text'),
         btnAddList = document.querySelector('.btn'),
@@ -8,14 +8,15 @@ document.addEventListener('DOMContentLoaded', function () {
         next = document.querySelector('.next'),
         prev = document.querySelector('.prev'),
         countPage = document.querySelector('.countPaginat'),
-        paginat = document.querySelector('.paginat');
+        paginat = document.querySelector('.paginat'),
+        sorts = document.querySelector('#mySelect');
     const maxElement = 4;
     let currentPage = 1;
     countPage.innerHTML = currentPage;
 
 
     //создание сохранных тасок с локал сторедж
-    todo.forEach(task => {
+    todo().forEach(task => {
         createHtml(task);
     });
     
@@ -31,19 +32,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         showItem(currentPage)
     }
-    showOrNotPaginat(todo.length)
+    showOrNotPaginat(todo().length)
 
-    function errorDiv(text) {
+
+    function errorDiv(text, color = 'red', time = 1000) {
         const errorDiv = document.createElement('div')
         errorDiv.innerHTML = `${text}`;
         errorDiv.style.position = 'absolute';
-        errorDiv.style.color = 'red';
+        errorDiv.style.color = color;
         errorDiv.style.top = '62px';
         errorDiv.style.fontSize = '25px';
         document.querySelector('.form').appendChild(errorDiv)
         setTimeout(() => {
             errorDiv.remove()
-        }, 1000)
+        }, time)
     }
     btnChangeHeader.addEventListener('click', () => {
         let promptChange = prompt('Введи Заголовок', '');
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btnAddList.addEventListener('click', (e) => {
         e.preventDefault();
-        const todo = JSON.parse(localStorage.getItem('todos')) || [];
+        const todo  = JSON.parse(localStorage.getItem('todos')) || [];
         const searchDuplicate = () => todo.reduce((arr, el) => {
             arr.push(el.name)
             return arr;
@@ -69,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             createHtml(todo[todo.length - 1])
             localStorage.setItem('todos', JSON.stringify(todo))
-            showOrNotPaginat(todo.length)
+            showOrNotPaginat(todo.length + 1)
             input.value = ''
         } else {
             errorDiv('Введите что-то!')
@@ -95,14 +97,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     <button class="del"><img src="img/dalete.png" alt="change"></button>
                 </div>
             `;
-            showOrNotPaginat(todo.length)
+            showOrNotPaginat(todo().length)
         }, 200)
 
         setTimeout(() => {
             listner(id)
         }, 0);
-        showOrNotPaginat(todo.length)
+        showOrNotPaginat(todo().length)
         list.appendChild(div);
+
     }
 
     function showItem(page) {
@@ -194,8 +197,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const containerTodo = document.getElementById(id)
         const switchDoneBtn = containerTodo.querySelector('.task-text');
         switchDoneBtn.classList.toggle('line')
-        const todo = JSON.parse(localStorage.getItem('todos'));
-        const updatedTodos = todo.map((el) => {
+        // const todo = JSON.parse(localStorage.getItem('todos'));
+        const updatedTodos = todo().map((el) => {
             if (el.id === id) {
                 return {
                     ...el,
@@ -208,7 +211,6 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('todos', JSON.stringify(updatedTodos));
     };
 
-
     const listner = (id) => {
         const todoConteiner = document.getElementById(id)
         todoConteiner.addEventListener('click', (e) => {
@@ -216,7 +218,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const btnRemove = e.target.closest('.del')
             const btnChange = e.target.closest('.change')
             const btnSavehanges = e.target.closest('.doneChange')
-         
             if (btnDone) {
                 handlerswitch(id)
             }
@@ -234,4 +235,60 @@ document.addEventListener('DOMContentLoaded', function () {
         })
 
     }
+
+    const sortingDone = () => {
+        const dones = [];
+        todo().forEach(e => {
+            if(document.getElementById(e.id)) {
+                const el = document.getElementById(e.id);
+                el.remove()
+            }   
+            if(e.done) {
+                dones.push(e)
+            }
+        })
+        dones.forEach(e => {
+            createHtml({...e})
+        })
+        showOrNotPaginat(dones.length)
+        sortsaddEventListener()
+    }
+
+    const sortingFalse = () => {
+        const falses = [];
+        todo().forEach(e => {
+            if(document.getElementById(e.id)) {
+                const el = document.getElementById(e.id);
+                el.remove()
+            }   
+            if(!e.done) {
+                falses.push(e)
+            }
+        })
+        falses.forEach(e => {
+            createHtml({...e})
+        })        
+        showOrNotPaginat(falses.length)
+        sortsaddEventListener()
+    }
+
+    const sortsaddEventListener = () => sorts.addEventListener('change', (e) => {
+        if(sorts.value === 'default') {
+            todo().forEach(e => {
+                if(document.getElementById(e.id)) {
+                    document.getElementById(e.id).remove();
+                }
+            })
+            todo().forEach(e => {
+                createHtml({...e})
+            })
+        }
+        if(sorts.value === 'true') {
+            sortingDone();
+        }
+        if(sorts.value === 'false') {
+            sortingFalse();
+        }
+    })
+    sortsaddEventListener()
 });

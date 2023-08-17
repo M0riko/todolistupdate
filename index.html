@@ -11,6 +11,14 @@
     <div class="container">
         <div class="header"><div class="header-text">ToDoList</div> <button id="change-header"><img src="img/change.png" alt="change"></button></div>
         <div class="content">
+            <div class="option">
+                <label for="mySelect">Выберите вариант сортировки</label>
+                <select id="mySelect">
+                  <option value="default">по умолчанию</option>
+                  <option value="true">выполненные</option>
+                  <option value="false">не выполненные</option>
+                </select>
+            </div>
             <form action="#" class="form">
                 <input type="text" id="input-text" placeholder="Todo...">
                 <button class="btn">Add Task</button>
