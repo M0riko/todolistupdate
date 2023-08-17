@@ -28,7 +28,6 @@ button:hover {
     transform: scale(1.12);
 }
 
-
 .container{
     padding: 5px;
     max-width: 1200px;
@@ -180,7 +179,6 @@ input::placeholder {
 .none {
     transition: all .3s ease;
     opacity: 0;
-    width: 1px;
     transform: scale(0);
 }
 .prev, .next {
@@ -214,7 +212,15 @@ input::placeholder {
     color: rgb(255, 255, 255, 0.7);
 }
 
+.removeTask {
+    opacity: 0%;
+    transition: all .2s ease;
+}
 
+.addTask {
+    transition: all .2s ease;
+    opacity: 100%;
+}
 @media (max-width: 500px) {
     .task {
         padding: 10px 20px 10px 20px;

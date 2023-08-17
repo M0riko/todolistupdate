@@ -1,174 +1,116 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+    const todo = JSON.parse(localStorage.getItem('todos')) || [];
     const btnChangeHeader = document.querySelector('#change-header'),
-          input = document.querySelector('#input-text'),
-          btnAddList = document.querySelector('.btn'),
-          headerText = document.querySelector('.header-text'),
-          list = document.querySelector('.task-list'),
-          next = document.querySelector('.next'),
-          prev = document.querySelector('.prev'),
-          countPage = document.querySelector('.countPaginat'),
-          paginat = document.querySelector('.paginat');
+        input = document.querySelector('#input-text'),
+        btnAddList = document.querySelector('.btn'),
+        headerText = document.querySelector('.header-text'),
+        list = document.querySelector('.task-list'),
+        next = document.querySelector('.next'),
+        prev = document.querySelector('.prev'),
+        countPage = document.querySelector('.countPaginat'),
+        paginat = document.querySelector('.paginat');
     const maxElement = 4;
     let currentPage = 1;
     countPage.innerHTML = currentPage;
-    const savedTasks = () => JSON.parse(localStorage.getItem('arr'));
-    console.log(savedTasks().length)
-    if (savedTasks().length > 0) {
-        savedTasks().forEach(task => {
-            create(task);
-            showOrNotPaginat(savedTasks());
-        });
+
+
+    //создание сохранных тасок с локал сторедж
+    todo.forEach(task => {
+        createHtml(task);
+    });
+    
+    function showOrNotPaginat(length) {
+        if (length >= 5) {
+            paginat.classList.add('active');
+            paginat.classList.remove('none');
+        } else {
+            paginat.classList.remove('active');
+            paginat.classList.add('none');
+            currentPage = 1;
+            countPage.innerHTML = currentPage;
+        }
+        showItem(currentPage)
     }
+    showOrNotPaginat(todo.length)
 
-function showOrNotPaginat(arr) {
-    if(arr.length >= 5) {
-        paginat.classList.add('active');
-        paginat.classList.remove('none');
-    } else if(arr.length < 5) {
-        paginat.classList.remove('active');
-        paginat.classList.add('none');
-        currentPage = 1;
-        countPage.innerHTML = currentPage;
+    function errorDiv(text) {
+        const errorDiv = document.createElement('div')
+        errorDiv.innerHTML = `${text}`;
+        errorDiv.style.position = 'absolute';
+        errorDiv.style.color = 'red';
+        errorDiv.style.top = '62px';
+        errorDiv.style.fontSize = '25px';
+        document.querySelector('.form').appendChild(errorDiv)
+        setTimeout(() => {
+            errorDiv.remove()
+        }, 1000)
     }
-}
-
-showOrNotPaginat(savedTasks())
-
     btnChangeHeader.addEventListener('click', () => {
         let promptChange = prompt('Введи Заголовок', '');
-        if(promptChange.length !== 0 && promptChange.length < 13) {
+        if (promptChange.length !== 0 && promptChange.length < 13) {
             headerText.innerHTML = promptChange;
         }
     });
 
     btnAddList.addEventListener('click', (e) => {
         e.preventDefault();
-        const inputTask = input.value.trim();
-        const lowerCaseSaveArr = savedTasks().reduce((arr, e) => {
-            arr.push(e.toLowerCase());
+        const todo = JSON.parse(localStorage.getItem('todos')) || [];
+        const searchDuplicate = () => todo.reduce((arr, el) => {
+            arr.push(el.name)
             return arr;
         }, [])
-        if(lowerCaseSaveArr.indexOf(inputTask.toLowerCase()) >= 0) {
-            const errorDiv = document.createElement('div')
-            errorDiv.innerHTML = `Такая задача уже есть!`;
-            errorDiv.style.position = 'absolute';
-            errorDiv.style.color = 'red';
-            errorDiv.style.top = '62px';
-            errorDiv.style.fontSize = '25px';
-            document.querySelector('.form').appendChild(errorDiv)
-            setTimeout(() => {
-                errorDiv.remove()
-            }, 1000)
-        } else if(inputTask !== '') {
-                savedTasks();
-                create(inputTask);
-                showItem(currentPage);
-                savedTasks().push(`${inputTask}`);
-                console.log(savedTasks())
-                showOrNotPaginat(savedTasks());
-
+        if(searchDuplicate().indexOf(input.value.trim()) >= 0) {
+            errorDiv('Такая задача уже есть!');
+        } else if(input.value.length > 0) {
+            todo.push({
+                name: input.value.trim(),
+                id: Math.random().toString(36).substr(2, 9),
+                done: false
+            })
+            createHtml(todo[todo.length - 1])
+            localStorage.setItem('todos', JSON.stringify(todo))
+            showOrNotPaginat(todo.length)
+            input.value = ''
         } else {
-            const errorDiv = document.createElement('div')
-            errorDiv.innerHTML = `Вы ничего не ввели!`;
-            errorDiv.style.position = 'absolute';
-            errorDiv.style.color = 'red';
-            errorDiv.style.top = '62px';
-            errorDiv.style.fontSize = '25px';
-            document.querySelector('.form').appendChild(errorDiv)
-            setTimeout(() => {
-                errorDiv.remove()
-            }, 1000)
+            errorDiv('Введите что-то!')
         }
-    }); 
+    });
 
 
-    function create(task) {
+    function createHtml({ id, name, done }) {
         const div = document.createElement('div');
-        div.classList.add('task');
-        div.innerHTML= `
-            <form action="#" class="change-task none">
-            <input type="text" id="change-text">
-            <button class="doneChange">EDIT</button>
-            </form>
-                <div class="task-text">${task}</div>
-                <div class="task-buttons">
-                <button class="change"><img src="img/change.png" alt="change"></button>
-                <button class="done"><img src="img/done.png" alt="change"></button>
-                <button class="del"><img src="img/dalete.png" alt="change"></button>
-            </div>
-        `;
-        const doneButton = div.querySelector('.done');
-        const taskText = div.querySelector('.task-text');
-        const delButton = div.querySelector('.del');
-        const changeButton = div.querySelector('.change');
-        const changeTaskInput = div.querySelector('#change-text');
-        const doneChangeButton = div.querySelector('.doneChange');
-        
-        doneButton.addEventListener('click', () => {
-            if (!taskText.classList.contains('line')) {
-                taskText.classList.add('line');
-            } else {
-                taskText.classList.remove('line');
-            }
-        });
-        
-        taskText.addEventListener('click', () => {
-            if (!taskText.classList.contains('line')) {
-                taskText.classList.add('line');
-            } else {
-                taskText.classList.remove('line');
-            }
-        });
-        
-        delButton.addEventListener('click', (e) => {
-            div.innerHTML = `Вы удалили задание: ${taskText.textContent}`;
-            console.log(savedTasks().indexOf(taskText.textContent))
-            setTimeout(() => {
-                div.remove();
-                console.log(savedTasks())
-                showOrNotPaginat(savedTasks());
-                showItem(currentPage);
-            }, 1000);
-            saveTasksToLocalStorage();
-        });
-        
-        changeButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (taskText.classList.contains('none')) {
-                taskText.classList.remove('none');
-                changeTaskInput.classList.add('none');
-            } else {
-                taskText.classList.add('none');
-                changeTaskInput.classList.remove('none');
-                changeTaskInput.value = taskText.textContent;
-            }
-        });
-        
-        doneChangeButton.addEventListener('click', () => {
-            if (changeTaskInput.value.trim() !== '') {
-                taskText.innerHTML = changeTaskInput.value;
-                taskText.classList.remove('none');
-                changeTaskInput.classList.add('none');
-            }
-            saveTasksToLocalStorage();
-        });
+        div.id = id
+        div.classList.add('addTask')
+        setTimeout(() => {
+            div.classList.add('task');
+            div.innerHTML = `
+                <form action="#" class="change-task none">
+                <input type="text" id="change-text">
+                <button class="doneChange">EDIT</button>
+                </form>
+                    <div class="task-text ${done && 'line'}">${name}</div>
+                    <div class="task-buttons">
+                    <button class="change"><img src="img/change.png" alt="change"></button>
+                    <button class="done"><img src="img/done.png" alt="change"></button>
+                    <button class="del"><img src="img/dalete.png" alt="change"></button>
+                </div>
+            `;
+            showOrNotPaginat(todo.length)
+        }, 200)
 
-        
-        list.appendChild(div);   
-        input.value = ''; 
-        saveTasksToLocalStorage();
-    } 
-    function saveTasksToLocalStorage() {
-            const tasks = Array.from(document.querySelectorAll('.task-text')).map(taskElement => taskElement.textContent);
-            localStorage.setItem('arr', JSON.stringify(tasks));
+        setTimeout(() => {
+            listner(id)
+        }, 0);
+        showOrNotPaginat(todo.length)
+        list.appendChild(div);
     }
 
     function showItem(page) {
         const elemetnPage = list.querySelectorAll('.task');
         const startIndex = (page - 1) * maxElement;
-        const endIndex = startIndex + maxElement ;
+        const endIndex = startIndex + maxElement;
         elemetnPage.forEach((item, index) => {
-            if(index >= startIndex && index < endIndex) {
+            if (index >= startIndex && index < endIndex) {
                 item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
@@ -179,18 +121,117 @@ showOrNotPaginat(savedTasks())
     next.addEventListener('click', () => {
         const elemetnPage = list.querySelectorAll('.task');
         const totalPage = Math.ceil(elemetnPage.length / maxElement);
-        if(currentPage < totalPage) {
+        if (currentPage < totalPage) {
             currentPage++;
             countPage.innerHTML = currentPage;
             showItem(currentPage);
         }
     })
     prev.addEventListener('click', () => {
-        
-        if(currentPage > 1) {
+
+        if (currentPage > 1) {
             currentPage--;
             countPage.innerHTML = currentPage;
             showItem(currentPage);
         }
     })
+
+    const handleSaveChanges = (id) => {
+        const todo = JSON.parse(localStorage.getItem('todos'));
+        const containerTodo = document.getElementById(id)
+        const todoText = containerTodo.querySelector('.task-text')
+        const form = containerTodo.querySelector('.change-task')
+        const saveChanges = containerTodo.querySelector('#change-text');
+
+        if (saveChanges.value.trim() !== '') {
+            todoText.innerHTML = saveChanges.value;
+            form.classList.add('none');
+            todoText.classList.remove('none');
+        }
+        const changesTodo = todo.map((el) => {
+            if (el.id === id) {
+                return {
+                    ...el,
+                    name: saveChanges.value
+                };
+            }
+            return el;
+        });
+
+        localStorage.setItem('todos', JSON.stringify(changesTodo));
+    }
+
+    const handlerChangeTodos = (id) => {
+        const containerTodo = document.getElementById(id)
+        const form = containerTodo.querySelector('.change-task')
+        const input = containerTodo.querySelector('input')
+        const todoText = containerTodo.querySelector('.task-text')
+        todoText.classList.add('none')
+        form.classList.remove('none')
+        input.value = todoText.textContent;
+
+        todo.forEach(el => {
+            if (el.id === id) {
+                el.name = input.value
+            }
+        })
+    }
+
+    const handlerRemoveTodo = (id) => {
+        const todo = JSON.parse(localStorage.getItem('todos'));
+        const deleteTodo = todo.filter(el => el.id !== id)
+        const removeDiv = document.getElementById(id)
+        removeDiv.classList.remove('addTask')
+        removeDiv.classList.add('removeTask')
+        setTimeout(() => {
+            removeDiv.remove()
+            showOrNotPaginat(deleteTodo.length)
+        }, 300)
+        localStorage.setItem('todos', JSON.stringify(deleteTodo));
+    }
+
+    const handlerswitch = (id) => {
+        const containerTodo = document.getElementById(id)
+        const switchDoneBtn = containerTodo.querySelector('.task-text');
+        switchDoneBtn.classList.toggle('line')
+        const todo = JSON.parse(localStorage.getItem('todos'));
+        const updatedTodos = todo.map((el) => {
+            if (el.id === id) {
+                return {
+                    ...el,
+                    done: !el.done
+                };
+            }
+            return el;
+        });
+        showOrNotPaginat(updatedTodos.length)
+        localStorage.setItem('todos', JSON.stringify(updatedTodos));
+    };
+
+
+    const listner = (id) => {
+        const todoConteiner = document.getElementById(id)
+        todoConteiner.addEventListener('click', (e) => {
+            const btnDone = e.target.closest('.done')
+            const btnRemove = e.target.closest('.del')
+            const btnChange = e.target.closest('.change')
+            const btnSavehanges = e.target.closest('.doneChange')
+         
+            if (btnDone) {
+                handlerswitch(id)
+            }
+            if (btnRemove) {
+
+                handlerRemoveTodo(id)
+            }
+            if (btnChange) {
+                handlerChangeTodos(id)
+            }
+            if (btnSavehanges) {
+                handleSaveChanges(id)
+            }
+
+        })
+
+    }
 });
