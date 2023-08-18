@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             createHtml(todo[todo.length - 1])
             localStorage.setItem('todos', JSON.stringify(todo))
-            showOrNotPaginat(todo.length + 1)
             input.value = ''
         } else {
             errorDiv('Введите что-то!')
@@ -173,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
         form.classList.remove('none')
         input.value = todoText.textContent;
 
-        todo.forEach(el => {
+        todo().forEach(el => {
             if (el.id === id) {
                 el.name = input.value
             }
@@ -197,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const containerTodo = document.getElementById(id)
         const switchDoneBtn = containerTodo.querySelector('.task-text');
         switchDoneBtn.classList.toggle('line')
-        // const todo = JSON.parse(localStorage.getItem('todos'));
+        console.log(containerTodo)
         const updatedTodos = todo().map((el) => {
             if (el.id === id) {
                 return {
@@ -214,10 +213,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const listner = (id) => {
         const todoConteiner = document.getElementById(id)
         todoConteiner.addEventListener('click', (e) => {
+            e.preventDefault()
             const btnDone = e.target.closest('.done')
             const btnRemove = e.target.closest('.del')
             const btnChange = e.target.closest('.change')
-            const btnSavehanges = e.target.closest('.doneChange')
+            const btnSavehanges = e.target.closest('.doneChange');
+        
+
             if (btnDone) {
                 handlerswitch(id)
             }
@@ -229,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 handlerChangeTodos(id)
             }
             if (btnSavehanges) {
+                btnSavehanges.a;
                 handleSaveChanges(id)
             }
 
@@ -237,39 +240,30 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const sortingDone = () => {
-        const dones = [];
-        todo().forEach(e => {
+        todo().filter(e => {
             if(document.getElementById(e.id)) {
-                const el = document.getElementById(e.id);
-                el.remove()
-            }   
+                document.getElementById(e.id).remove();
+            }
             if(e.done) {
-                dones.push(e)
+                createHtml({...e})
             }
         })
-        dones.forEach(e => {
-            createHtml({...e})
-        })
-        showOrNotPaginat(dones.length)
-        sortsaddEventListener()
+        currentPage = 1;
+        countPage.innerHTML = currentPage;
     }
 
     const sortingFalse = () => {
-        const falses = [];
-        todo().forEach(e => {
+        todo().filter(e => {
             if(document.getElementById(e.id)) {
-                const el = document.getElementById(e.id);
-                el.remove()
-            }   
+                document.getElementById(e.id).remove();
+            }
             if(!e.done) {
-                falses.push(e)
+                createHtml({...e})
             }
         })
-        falses.forEach(e => {
-            createHtml({...e})
-        })        
-        showOrNotPaginat(falses.length)
-        sortsaddEventListener()
+        currentPage = 1;
+        countPage.innerHTML = currentPage;
+
     }
 
     const sortsaddEventListener = () => sorts.addEventListener('change', (e) => {
@@ -278,8 +272,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 if(document.getElementById(e.id)) {
                     document.getElementById(e.id).remove();
                 }
-            })
-            todo().forEach(e => {
                 createHtml({...e})
             })
         }
