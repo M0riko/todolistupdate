@@ -263,6 +263,38 @@ label {
     font-weight: bold;
     color: rgb(0, 0, 0);
   }
+  .modal {
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .modal-content {
+    z-index: 100;
+    position: relative;
+    max-width: 500px;
+    height: 500px;
+    margin: 0 auto;
+    padding: 60px 10px 10px 10px;
+    background-color: rgba(64, 175, 255, 1);
+    text-align: center;
+    margin: 200px auto 0 auto;
+  }
+  .modal-close {
+    top: 0;
+    right: 5px;
+    position: absolute;
+    font-size: 40px;
+    background: none;
+  }
+  .modal-text {
+    word-wrap: break-word;
+    white-space: normal; 
+    font-weight: 500;
+    font-size: 17px;
+  }
 @media (max-width: 500px) {
     .task {
         padding: 10px 20px 10px 20px;

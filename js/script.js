@@ -9,7 +9,11 @@ document.addEventListener('DOMContentLoaded', function () {
         prev = document.querySelector('.prev'),
         countPage = document.querySelector('.countPaginat'),
         paginat = document.querySelector('.paginat'),
-        sorts = document.querySelector('#mySelect');
+        sorts = document.querySelector('#mySelect'),
+        modal = document.querySelector('.modal'),
+        modalClose = document.querySelector('.modal-close'),
+        modalText = document.querySelector('.modal-text'),
+        modalContent = document.querySelector('.modal-content');
     const maxElement = 4;
     let currentPage = 1;
     countPage.innerHTML = currentPage;
@@ -19,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     todo().forEach(task => {
         createHtml(task);
     });
-    
+
     function showOrNotPaginat(length) {
         if (length >= 5) {
             paginat.classList.add('active');
@@ -56,14 +60,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btnAddList.addEventListener('click', (e) => {
         e.preventDefault();
-        const todo  = JSON.parse(localStorage.getItem('todos')) || [];
+        const todo = JSON.parse(localStorage.getItem('todos')) || [];
         const searchDuplicate = () => todo.reduce((arr, el) => {
             arr.push(el.name)
             return arr;
         }, [])
-        if(searchDuplicate().indexOf(input.value.trim()) >= 0) {
+        if (searchDuplicate().indexOf(input.value.trim()) >= 0) {
             errorDiv('Такая задача уже есть!');
-        } else if(input.value.length > 0) {
+        } else if (input.value.length > 0) {
             todo.push({
                 name: input.value.trim(),
                 id: Math.random().toString(36).substr(2, 9),
@@ -89,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <input type="text" id="change-text">
                 <button class="doneChange">EDIT</button>
                 </form>
-                    <div class="task-text ${done && 'line'}">${name}</div>
+                    <div class="task-text ${done && 'line'}">${name.length > 20 ? name.substring(0, 20) + '...' : name}</div>
                     <div class="task-buttons">
                     <button class="change"><img src="img/change.png" alt="change"></button>
                     <button class="done"><img src="img/done.png" alt="change"></button>
@@ -146,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const saveChanges = containerTodo.querySelector('#change-text');
 
         if (saveChanges.value.trim() !== '') {
-            todoText.innerHTML = saveChanges.value;
+            todoText.innerHTML = saveChanges.value.length > 20 ? `${saveChanges.value.substring(0, 20)}...` : saveChanges.value;
             form.classList.add('none');
             todoText.classList.remove('none');
         }
@@ -170,8 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const todoText = containerTodo.querySelector('.task-text')
         todoText.classList.add('none')
         form.classList.remove('none')
-        input.value = todoText.textContent;
-
+        input.value = todo().filter(e => e.id === id)[0].name;
+ 
         todo().forEach(el => {
             if (el.id === id) {
                 el.name = input.value
@@ -210,6 +214,20 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('todos', JSON.stringify(updatedTodos));
     };
 
+    function modalCloses () {
+        modalClose.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.classList.add('none');
+        })
+        modal.addEventListener('click', () => {
+            modal.classList.add('none');
+        })
+        modalContent.addEventListener("click", (event) => {
+            event.stopPropagation();
+        });
+    }
+    modalCloses();
+
     const listner = (id) => {
         const todoConteiner = document.getElementById(id)
         todoConteiner.addEventListener('click', (e) => {
@@ -217,8 +235,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const btnDone = e.target.closest('.done')
             const btnRemove = e.target.closest('.del')
             const btnChange = e.target.closest('.change')
-            const btnSavehanges = e.target.closest('.doneChange');
-        
+            const btnSavehanges = e.target.closest('.doneChange')
+            const text = e.target.closest('.task-text')
+
 
             if (btnDone) {
                 handlerswitch(id)
@@ -234,18 +253,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 btnSavehanges.a;
                 handleSaveChanges(id)
             }
-
+            if(text.textContent.length > 20) {
+                modal.classList.remove('none');
+                modalText.innerHTML = todo().filter(e => e.id === id)[0].name;
+            }
         })
 
     }
 
     const sortingDone = () => {
         todo().filter(e => {
-            if(document.getElementById(e.id)) {
+            if (document.getElementById(e.id)) {
                 document.getElementById(e.id).remove();
             }
-            if(e.done) {
-                createHtml({...e})
+            if (e.done) {
+                createHtml({ ...e })
             }
         })
         currentPage = 1;
@@ -254,11 +276,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const sortingFalse = () => {
         todo().filter(e => {
-            if(document.getElementById(e.id)) {
+            if (document.getElementById(e.id)) {
                 document.getElementById(e.id).remove();
             }
-            if(!e.done) {
-                createHtml({...e})
+            if (!e.done) {
+                createHtml({ ...e })
             }
         })
         currentPage = 1;
@@ -267,18 +289,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const sortsaddEventListener = () => sorts.addEventListener('change', (e) => {
-        if(sorts.value === 'default') {
+        if (sorts.value === 'default') {
             todo().forEach(e => {
-                if(document.getElementById(e.id)) {
+                if (document.getElementById(e.id)) {
                     document.getElementById(e.id).remove();
                 }
-                createHtml({...e})
+                createHtml({ ...e })
             })
         }
-        if(sorts.value === 'true') {
+        if (sorts.value === 'true') {
             sortingDone();
         }
-        if(sorts.value === 'false') {
+        if (sorts.value === 'false') {
             sortingFalse();
         }
     })
