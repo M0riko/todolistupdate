@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    btnAddList.addEventListener('click', () => {
+    btnAddList.addEventListener('click', (btn) => {
+        btn.preventDefault();
         const inputTask = input.value.trim();
         if(inputTask !== '') {
                 create(inputTask);
@@ -44,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }); 
 
 
-    function create(task) {
+    function create(task, classActive) {
         const div = document.createElement('div');
         div.classList.add('task');
         div.innerHTML= `
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <input type="text" id="change-text">
             <button class="doneChange">EDIT</button>
             </form>
-                <div class="task-text">${task}</div>
+                <div class="task-text ${classActive}">${task}</div>
                 <div class="task-buttons">
                 <button class="change"><img src="img/change.png" alt="change"></button>
                 <button class="done"><img src="img/done.png" alt="change"></button>
@@ -137,5 +138,4 @@ document.addEventListener('DOMContentLoaded', function() {
             showItem(currentPage);
         }
     })
-    console.log(1);
 });
